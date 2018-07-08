@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Goal: Prepare the environment for build, eg. making sure configuration files
+# are present and correct for the target environment.
+
+# secrets - some config values cant be committed so we need to ask for them
+
+if [ ! -f /config/secrets.yml ]; then
+
+    echo "Error: 'config/secrets.yml' not found."
+    echo ""
+    echo "Within 'config' create 'secrets.yml' with appropriate values"
+    echo "using the supplied dist file as an example."
+
+    exit 1
+fi
+
+# skeleton - if the root application directory is empty then count this as a first time install
+# and copy over the skeleton directory.
+
+if [ "$(ls /app | wc -l)" = "1" ]; then
+  cp -r /home/build/skeleton/. /app/
+fi
+
+# confd - see root/etc/confd for what is really going on here, TLDR; config templates are built
+# and applied from values in 'environment/environment.yml' and 'environment/environment.secrets.yml'
+
+confd \
+  -confdir=/etc/confd \
+  -backend=file \
+  -file=/config/common.yml \
+  -file=/config/environment_${ENVIRONMENT:-local}.yml \
+  -file=/config/secrets.yml \
+  -onetime
+ 

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+ENVIRONMENT_NAMESPACE=$(value meta.name)

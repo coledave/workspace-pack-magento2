@@ -1,0 +1,7 @@
+[template]
+src   = "auth.json.tmpl"
+dest  = "/app/auth.json"
+mode  = "0644"
+keys = [
+    "/magento"
+]

@@ -1,0 +1,33 @@
+version: '3'
+services:
+
+  application:
+    build:
+      context: ./
+      dockerfile: images/application/Dockerfile
+    entrypoint: /entrypoint.local.sh
+    volumes:
+      - ../:/app:delegated
+
+  workspace:
+    build:
+      context: ./
+      dockerfile: images/workspace/Dockerfile
+    environment:
+      - ENVIRONMENT=local
+    volumes:
+      - ../:/app:delegated
+      - ./images/workspace/root/etc/confd:/etc/confd
+      - ./images/workspace/root/home/build/bin:/home/build/bin
+      - ./config:/config
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=application
+      - MYSQL_USER=application
+      - MYSQL_PASSWORD=application
+
+  redis:
+    image: redis:4-alpine
