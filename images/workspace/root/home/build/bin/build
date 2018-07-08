@@ -1,3 +1,45 @@
 #!/bin/bash
 
 composer install
+
+if [ ! -f /app/app/etc/env.php ]; then
+
+    read -p "perform magento installation? (y/n): " response
+
+    if [ "$response" = "y" ]; then
+
+        magento setup:install \
+            \
+            --backend-frontname=admin \
+            --base-url=http://$APPLICATION_HOSTNAME \
+            \
+            --admin-user=admin \
+            --admin-password=admin123 \
+            --admin-email=admin@localhost.local \
+            --admin-firstname=First \
+            --admin-lastname=Last \
+            \
+            --db-host=$DATABASE_HOSTNAME \
+            --db-name=$DATABASE_NAME \
+            --db-user=$DATABASE_USERNAME \
+            --db-password=$DATABASE_PASSWORD \
+            \
+            --session-save=redis \
+            --session-save-redis-host=redis \
+            --session-save-redis-port=6379 \
+            --session-save-redis-db=1 \
+            \
+            --cache-backend=redis \
+            --cache-backend-redis-server=redis \
+            --cache-backend-redis-port=6379 \
+            --cache-backend-redis-db=2 \
+            \
+            --page-cache=redis \
+            --page-cache-redis-server=redis \
+            --page-cache-redis-port=6379 \
+            --page-cache-redis-db=3
+
+        magento indexer:reindex
+        magento cache:clean
+    fi
+fi

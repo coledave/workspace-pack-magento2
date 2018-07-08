@@ -6,6 +6,13 @@ services:
       context: ./
       dockerfile: images/application/Dockerfile
     entrypoint: /entrypoint.local.sh
+    depends_on:
+      - mysql
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
     volumes:
       - ../:/app:delegated
 
@@ -13,8 +20,15 @@ services:
     build:
       context: ./
       dockerfile: images/workspace/Dockerfile
+    depends_on:
+      - mysql
     environment:
       - ENVIRONMENT=local
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
+      - DATABASE_USERNAME=${DATABASE_USERNAME}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - APPLICATION_HOSTNAME=${APPLIOCATION_HOSTNAME}
     volumes:
       - ../:/app:delegated
       - ./images/workspace/root/etc/confd:/etc/confd
@@ -23,11 +37,15 @@ services:
 
   mysql:
     image: mysql:5.7
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
     environment:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=application
-      - MYSQL_USER=application
-      - MYSQL_PASSWORD=application
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USERNAME}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
 
   redis:
     image: redis:4-alpine
