@@ -9,6 +9,7 @@ services:
     depends_on:
       - mysql
     environment:
+      - APPLICATION_HOSTNAME=${APPLICATION_HOSTNAME}
       - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
@@ -23,12 +24,12 @@ services:
     depends_on:
       - mysql
     environment:
+      - APPLICATION_HOSTNAME=${APPLICATION_HOSTNAME}
       - ENVIRONMENT=local
       - DATABASE_HOSTNAME=${DATABASE_HOSTNAME}
       - DATABASE_USERNAME=${DATABASE_USERNAME}
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - DATABASE_NAME=${DATABASE_NAME}
-      - APPLICATION_HOSTNAME=${APPLIOCATION_HOSTNAME}
     volumes:
       - ../:/app:delegated
       - ./images/workspace/root/etc/confd:/etc/confd
